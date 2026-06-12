@@ -22,6 +22,7 @@ router.get('/', (req, res) => {
       description: 'This is idea 3',
     },
   ];
+
   res.json(ideas);
 });
 
