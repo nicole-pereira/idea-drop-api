@@ -69,4 +69,64 @@ router.post('/', async (req, res, next) => {
   }
 });
 
+// @route         DELETE /api/ideas/:id
+// @description   Delete idea
+// @access        Public
+router.delete('/:id', async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      res.status(404);
+      throw new Error('Idea not found');
+    }
+    const idea = await Idea.findByIdAndDelete(id);
+    if (!idea) {
+      res.status(404);
+      throw new Error('Idea not found');
+    }
+    res.json({message: 'Idea deleted successfully'});
+  } catch (err) {
+    next(err);
+  }
+});
+
+
+// @route         PUT /api/ideas/:id
+// @description   Update idea
+// @access        Public
+router.put('/:id', async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      res.status(404);
+      throw new Error('Idea not found');
+    }
+
+    const { title, summary, description, tags } = req.body;
+
+    const updatedIdea = await Idea.findByIdAndUpdate(id, {
+      title,
+      summary,
+      description,
+      tags: typeof tags === 'string'
+          ? tags
+              .split(',')
+              .map((tag) => tag.trim())
+              .filter(Boolean)
+          : Array.isArray(tags)
+            ? tags
+            : [],
+    }, {new: true, runValidators: true});
+      
+
+    if (!updatedIdea) {
+      res.status(404);
+      throw new Error('Idea not found');
+    }
+    res.json(updatedIdea);
+  } catch (err) {
+    next(err);
+  }
+});
+
 export default router;
