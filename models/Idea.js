@@ -20,7 +20,7 @@ const ideaSchema = new mongoose.Schema({
         default: []
     }
 }, {
-    tilestamps: true
+    timestamps: true
 });
 
 const Idea = mongoose.model('Idea', ideaSchema);
