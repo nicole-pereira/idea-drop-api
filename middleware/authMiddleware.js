@@ -14,7 +14,7 @@ export const protect = async (req, res, next) => {
             throw new Error('Not authorized, no token');
         }
 
-        const token = authHeader.spit(' ')[1];
+        const token = authHeader.split(' ')[1];
         const { payload } = await jwtVerify(token, JWT_SECRET);
 
         const user = await User.findById(payload.userId).select('_id name email');
