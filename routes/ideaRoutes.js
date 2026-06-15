@@ -136,9 +136,9 @@ router.put('/:id', protect, async (req, res, next) => {
 
     const { title, summary, description, tags } = req.body || {};
 
-    idea.title = title;
-    idea.summary = summary;
-    idea.description = description;
+    idea.title = title ?? idea.title;
+    idea.summary = summary ?? idea.summary;
+    idea.description = description ?? idea.description;
     idea.tags = Array.isArray(tags) ? tags : typeof tags === 'string' ?
                 tags
                 .split(',')
