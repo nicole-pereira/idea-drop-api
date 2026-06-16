@@ -39,7 +39,7 @@ router.post('/register', async (req, res, next) => {
         res.cookie('refreshToken', refreshToken, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
-            sameSite: 'none',
+            sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
             maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
         });
 
@@ -89,8 +89,8 @@ router.post('/login', async (req, res, next) => {
         res.cookie('refreshToken', refreshToken, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
-            sameSite: 'none',
-            maxAge: 30 * 24 * 60 * 60 * 1000,
+            sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+            maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
         });
 
         res.status(200).json({
@@ -114,7 +114,7 @@ router.post('/logout', (req, res) => {
     res.clearCookie('refreshToken', {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        sameSite: 'none'
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
     });
     res.status(200).json({message: 'Logged out successfully'})
 });
@@ -125,7 +125,6 @@ router.post('/logout', (req, res) => {
 router.post('/refresh', async (req, res, next) => {
     try {
         const token = req.cookies?.refreshToken;
-        console.log('Refreshing token...');
 
         if (!token)  {
             res.status(401);
@@ -145,7 +144,7 @@ router.post('/refresh', async (req, res, next) => {
 
         res.json({
             accessToken: newAccessToken,
-            use: {
+            user: {
                 id: user._id,
                 name: user.name,
                 email: user.email,
